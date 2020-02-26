@@ -17,7 +17,7 @@ module.exports = {
 		jest: true
 	},
 	rules: {
-		'max-len': ['error', { code: 120 }],
+		'max-len': ['error', { code: 121 }],
 		'@typescript-eslint/interface-name-prefix': 'off',
 		'@typescript-eslint/explicit-function-return-type': 'off',
 		'@typescript-eslint/no-explicit-any': 'off'

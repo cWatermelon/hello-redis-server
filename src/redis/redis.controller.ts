@@ -1,8 +1,7 @@
 import { Controller, Post, Body, Get, Query, Delete } from '@nestjs/common';
 import { RedisService } from './redis.service';
 import IORedis from 'ioredis';
-import { Observable } from 'rxjs';
-import { SetValueByKey } from '../interface/redis.interface';
+import { SetValueByKey, Response } from '../interface/redis.interface';
 
 /**
  * @author chenc
@@ -13,32 +12,56 @@ export class RedisController {
 	constructor(readonly redis: RedisService) {}
 
 	@Post('login')
-	login(@Body() params: IORedis.RedisOptions) {
-		this.redis.login(params);
+	async login(@Body() params: IORedis.RedisOptions): Promise<Response<boolean>> {
+		const result = await this.redis.login(params);
+		return {
+			statusCode: 200,
+			data: result
+		};
 	}
 
 	@Get('keys')
-	keys(@Query('partten') partten: string): Observable<string[]> {
-		return this.redis.keys(partten);
+	async keys(@Query('partten') partten: string): Promise<Response<string[]>> {
+		const result = await this.redis.keys(partten);
+		return {
+			statusCode: 200,
+			data: result
+		};
 	}
 
 	@Get('key')
-	getValueByKey(@Query('key') key: string): Observable<string> {
-		return this.redis.getValueByKey(key);
+	async getValueByKey(@Query('key') key: string): Promise<Response<string>> {
+		const result = await this.redis.getValueByKey(key);
+		return {
+			statusCode: 200,
+			data: result
+		};
 	}
 
 	@Delete('key')
-	deleteKey(@Query('key') key: string) {
-		return this.redis.deleteKey(key);
+	async deleteKey(@Query('key') key: string) {
+		const result = await this.redis.deleteKey(key);
+		return {
+			statusCode: 200,
+			data: result
+		};
 	}
 
 	@Post('set')
-	setValueByKey(@Body() params: SetValueByKey) {
-		return this.redis.setValueByKey(params);
+	async setValueByKey(@Body() params: SetValueByKey): Promise<Response<string>> {
+		const result = await this.redis.setValueByKey(params);
+		return {
+			statusCode: 200,
+			data: result
+		};
 	}
 
 	@Get('ttl')
-	getTtlByKey(@Query('key') key: string): Observable<number> {
-		return this.redis.getKeyOfTtl(key);
+	async getTtlByKey(@Query('key') key: string): Promise<Response<number>> {
+		const result = await this.redis.getKeyOfTtl(key);
+		return {
+			statusCode: 200,
+			data: result
+		};
 	}
 }

@@ -5,7 +5,12 @@ import IORedis from 'ioredis';
 export interface SetValueByKey {
 	key: IORedis.KeyType;
 	value: IORedis.ValueType;
-	expiryMode?: string | any[];
+	expiryMode?: 'PX' | 'EX';
 	time?: number | string;
-	setMode?: number | string;
+	setMode?: 'NX' | 'XX';
+}
+
+export interface Response<T> {
+	data: T;
+	statusCode: number;
 }
