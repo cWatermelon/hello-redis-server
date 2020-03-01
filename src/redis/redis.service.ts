@@ -7,11 +7,17 @@ export class RedisService {
 	redis: IORedis.Redis;
 
 	async login(options: IORedis.RedisOptions): Promise<boolean> {
-		const result = await this.connect(options);
-		if (result) {
-			this.redis = result;
+		try {
+			const result = await this.connect(options);
+			if (result) {
+				console.log('login success');
+				this.redis = result;
+			}
+			return true;
+		} catch (e) {
+			console.log(e, 'error');
+			return false;
 		}
-		return result !== false;
 	}
 
 	async keys(partten: string): Promise<string[]> {
@@ -26,12 +32,21 @@ export class RedisService {
 		return await this.redis.del(...key);
 	}
 
-	async setValueByKey({ key, value, expiryMode = 'EX', time = 60, setMode = 'XX' }: SetValueByKey): Promise<string> {
-		return await this.redis.set(key, value, expiryMode, time, setMode);
+	async setValueByKey({ key, value, expiryMode = 'EX', time = 300, setMode = 'NX' }: SetValueByKey): Promise<string> {
+		const result = await this.redis.set(key, value, expiryMode, time, setMode);
+		return result;
 	}
 
 	async getKeyOfTtl(key: IORedis.KeyType): Promise<number> {
 		return await this.redis.ttl(key);
+	}
+
+	async setExpireOfKey(key: IORedis.KeyType, expireTime: number): Promise<1 | 0> {
+		return await this.redis.expire(key, expireTime);
+	}
+
+	async renameKey(key: IORedis.KeyType, newKey: IORedis.KeyType): Promise<string> {
+		return await this.redis.rename(key, newKey);
 	}
 
 	private async connect(param: IORedis.RedisOptions): Promise<false | IORedis.Redis> {

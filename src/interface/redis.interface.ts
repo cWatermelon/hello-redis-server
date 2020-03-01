@@ -10,6 +10,16 @@ export interface SetValueByKey {
 	setMode?: 'NX' | 'XX';
 }
 
+export class ExpireOfKey {
+	key: IORedis.KeyType;
+	expireTime: number;
+}
+
+export class RenameKey {
+	key: IORedis.KeyType;
+	newKey: IORedis.KeyType;
+}
+
 export interface Response<T> {
 	data: T;
 	statusCode: number;

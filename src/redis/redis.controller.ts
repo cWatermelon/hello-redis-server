@@ -1,7 +1,7 @@
-import { Controller, Post, Body, Get, Query, Delete } from '@nestjs/common';
+import { Controller, Post, Body, Get, Query, Delete, Put } from '@nestjs/common';
 import { RedisService } from './redis.service';
 import IORedis from 'ioredis';
-import { SetValueByKey, Response } from '../interface/redis.interface';
+import { SetValueByKey, Response, ExpireOfKey, RenameKey } from '../interface/redis.interface';
 
 /**
  * @author chenc
@@ -59,6 +59,24 @@ export class RedisController {
 	@Get('ttl')
 	async getTtlByKey(@Query('key') key: string): Promise<Response<number>> {
 		const result = await this.redis.getKeyOfTtl(key);
+		return {
+			statusCode: 200,
+			data: result
+		};
+	}
+
+	@Put('expire')
+	async setExpireOfKey(@Body() params: ExpireOfKey): Promise<Response<1 | 0>> {
+		const result = await this.redis.setExpireOfKey(params.key, params.expireTime);
+		return {
+			statusCode: 200,
+			data: result
+		};
+	}
+
+	@Put('rename')
+	async renameKey(@Body() params: RenameKey): Promise<Response<string>> {
+		const result = await this.redis.renameKey(params.key, params.newKey);
 		return {
 			statusCode: 200,
 			data: result
