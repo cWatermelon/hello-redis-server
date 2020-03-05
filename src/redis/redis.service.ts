@@ -15,7 +15,6 @@ export class RedisService {
 			}
 			return true;
 		} catch (e) {
-			console.log(e, 'error');
 			return false;
 		}
 	}

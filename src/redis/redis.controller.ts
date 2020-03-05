@@ -1,7 +1,9 @@
-import { Controller, Post, Body, Get, Query, Delete, Put } from '@nestjs/common';
-import { RedisService } from './redis.service';
 import IORedis from 'ioredis';
+import { Controller, Post, Body, Get, Query, Delete, Put, UseGuards } from '@nestjs/common';
+import { RedisService } from './redis.service';
+import { AuthService } from '../auth/auth.service';
 import { SetValueByKey, Response, ExpireOfKey, RenameKey } from '../interface/redis.interface';
+import { AuthGuard } from '@nestjs/passport';
 
 /**
  * @author chenc
@@ -9,17 +11,19 @@ import { SetValueByKey, Response, ExpireOfKey, RenameKey } from '../interface/re
  */
 @Controller('redis')
 export class RedisController {
-	constructor(readonly redis: RedisService) {}
+	constructor(private readonly redis: RedisService, private readonly authService: AuthService) {}
 
+	@UseGuards(AuthGuard('local'))
 	@Post('login')
-	async login(@Body() params: IORedis.RedisOptions): Promise<Response<boolean>> {
-		const result = await this.redis.login(params);
+	async login(@Body() params: IORedis.RedisOptions & { name: string }): Promise<Response<boolean>> {
+		const result = await this.authService.login(params);
 		return {
 			statusCode: 200,
 			data: result
 		};
 	}
 
+	@UseGuards(AuthGuard('jwt'))
 	@Get('keys')
 	async keys(@Query('partten') partten: string): Promise<Response<string[]>> {
 		const result = await this.redis.keys(partten);
