@@ -1,22 +1,21 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { AuthService } from './auth.service';
+import { JwtStrategy } from './jwt.strategy';
 import { RedisModule } from '../redis/redis.module';
+import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from './constants';
-import { PassportModule } from '@nestjs/passport';
-import { LocalStrategy } from './local.strategy';
-import { JwtStrategy } from './jwt.strategy';
 
 @Module({
 	imports: [
-		RedisModule,
-		PassportModule,
+		PassportModule.register({ defaultStrategy: 'jwt' }),
 		JwtModule.register({
 			secret: jwtConstants.secret,
-			signOptions: { expiresIn: '60s' }
-		})
+			signOptions: { expiresIn: '1h' }
+		}),
+		forwardRef(() => RedisModule)
 	],
-	providers: [AuthService, LocalStrategy, JwtStrategy],
+	providers: [AuthService, JwtStrategy],
 	exports: [AuthService]
 })
 export class AuthModule {}

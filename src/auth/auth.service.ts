@@ -1,23 +1,23 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { RedisService } from '../redis/redis.service';
 import { JwtService } from '@nestjs/jwt';
 import IORedis from 'ioredis';
-import { RedisService } from '../redis/redis.service';
 
 @Injectable()
 export class AuthService {
-	constructor(private readonly jwtService: JwtService, private readonly redisService: RedisService) {}
+	constructor(private readonly redisService: RedisService, private readonly jwtService: JwtService) {}
 
-	async validateUser(payload: IORedis.RedisOptions & { name: string }): Promise<any> {
-		const user = await this.redisService.login(payload);
-		if (user) {
-			return payload;
+	async login(payload: IORedis.RedisOptions & { name: string }) {
+		const result = await this.redisService.login(payload);
+		if (!result) {
+			throw new UnauthorizedException('身份验证失败!');
 		}
-		return null;
+		return {
+			accessToken: this.signToken({ name: payload.name })
+		};
 	}
 
-	async login(payload: IORedis.RedisOptions & { name: string }): Promise<any> {
-		return {
-			accessToken: this.jwtService.sign(payload.name)
-		};
+	private signToken(payload: { name: string }) {
+		return this.jwtService.sign(payload);
 	}
 }

@@ -1,12 +1,13 @@
-import { Module, Global } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
+import { PassportModule } from '@nestjs/passport';
 import { RedisService } from './redis.service';
 import { RedisController } from './redis.controller';
-import { AuthService } from '../auth/auth.service';
+import { AuthModule } from '../auth/auth.module';
 
-@Global()
 @Module({
-	providers: [RedisService, AuthService],
+	imports: [PassportModule.register({ defaultStrategy: 'jwt' }), forwardRef(() => AuthModule)],
 	exports: [RedisService],
+	providers: [RedisService],
 	controllers: [RedisController]
 })
 export class RedisModule {}

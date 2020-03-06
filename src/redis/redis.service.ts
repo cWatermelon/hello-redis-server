@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import IORedis from 'ioredis';
 import { SetValueByKey } from '../interface/redis.interface';
 
@@ -10,9 +10,9 @@ export class RedisService {
 		try {
 			const result = await this.connect(options);
 			if (result) {
-				console.log('login success');
 				this.redis = result;
 			}
+			Logger.log('info');
 			return true;
 		} catch (e) {
 			return false;
