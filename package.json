@@ -1,8 +1,11 @@
 {
 	"name": "hello-redis-server",
 	"version": "1.0.0",
-	"description": "",
-	"author": "",
+	"description": "Redis service built by nestjs",
+	"author": {
+		"name": "chenc",
+		"email": "double_cl@163.com"
+	},
 	"license": "MIT",
 	"scripts": {
 		"prebuild": "rimraf dist",

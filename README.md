@@ -1,6 +1,6 @@
 # redis application server
 
-- 由 nestjs 构建的操作 redis 的服务
+- Redis service built by nestjs
 
 ## Description
 

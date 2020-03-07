@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import IORedis from 'ioredis';
 import { SetValueByKey } from '../interface/redis.interface';
 
@@ -7,12 +7,12 @@ export class RedisService {
 	redis: IORedis.Redis;
 
 	async login(options: IORedis.RedisOptions): Promise<boolean> {
+		let result: false | IORedis.Redis;
 		try {
-			const result = await this.connect(options);
+			result = await this.connect(options);
 			if (result) {
 				this.redis = result;
 			}
-			Logger.log('info');
 			return true;
 		} catch (e) {
 			return false;
@@ -49,10 +49,14 @@ export class RedisService {
 	}
 
 	private async connect(param: IORedis.RedisOptions): Promise<false | IORedis.Redis> {
-		return new Promise((resolve, reject) => {
+		const redis = new Promise<false | IORedis.Redis>((resolve, reject) => {
 			const redis = new IORedis(param);
 			redis.on('ready', () => resolve(redis));
-			redis.on('error', e => reject(e));
+			redis.on('error', e => {
+				redis.quit();
+				return reject(e);
+			});
 		});
+		return redis;
 	}
 }
