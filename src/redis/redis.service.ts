@@ -48,6 +48,10 @@ export class RedisService {
 		return await this.redis.rename(key, newKey);
 	}
 
+	async checKeyExist(key: IORedis.KeyType): Promise<number> {
+		return await this.redis.exists(key);
+	}
+
 	private async connect(param: IORedis.RedisOptions): Promise<false | IORedis.Redis> {
 		const redis = new Promise<false | IORedis.Redis>((resolve, reject) => {
 			const redis = new IORedis(param);

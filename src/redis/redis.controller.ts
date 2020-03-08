@@ -90,4 +90,14 @@ export class RedisController {
 			data: result
 		};
 	}
+
+	@UseGuards(AuthGuard())
+	@Get('exist')
+	async checkKeyExist(@Query('key') key: string): Promise<Response<number>> {
+		const result = await this.redis.checKeyExist(key);
+		return {
+			statusCode: 200,
+			data: result
+		};
+	}
 }
