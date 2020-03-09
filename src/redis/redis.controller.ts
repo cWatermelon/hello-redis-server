@@ -1,9 +1,10 @@
 import IORedis from 'ioredis';
-import { Controller, Post, Body, Get, Query, Delete, Put, UseGuards } from '@nestjs/common';
-import { RedisService } from './redis.service';
-import { SetValueByKey, Response, ExpireOfKey, RenameKey } from '../interface/redis.interface';
 import { AuthGuard } from '@nestjs/passport';
+import { RedisService } from './redis.service';
 import { AuthService } from '../auth/auth.service';
+import { User } from '../decorator/user.decorator';
+import { SetValueByKey, Response, ExpireOfKey, RenameKey } from '../interface/redis.interface';
+import { Controller, Post, Body, Get, Query, Delete, Put, UseGuards } from '@nestjs/common';
 
 /**
  * @author chenc
@@ -98,6 +99,15 @@ export class RedisController {
 		return {
 			statusCode: 200,
 			data: result
+		};
+	}
+
+	@UseGuards(AuthGuard())
+	@Get('currentUser')
+	async currentUser(@User() user): Promise<Response<{ name: string; db: number }>> {
+		return {
+			statusCode: 200,
+			data: user
 		};
 	}
 }

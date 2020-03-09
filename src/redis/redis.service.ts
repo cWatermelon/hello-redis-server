@@ -52,6 +52,7 @@ export class RedisService {
 		return await this.redis.exists(key);
 	}
 
+	// connect redis
 	private async connect(param: IORedis.RedisOptions): Promise<false | IORedis.Redis> {
 		const redis = new Promise<false | IORedis.Redis>((resolve, reject) => {
 			const redis = new IORedis(param);

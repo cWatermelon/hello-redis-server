@@ -13,11 +13,11 @@ export class AuthService {
 			throw new UnauthorizedException('身份验证失败!');
 		}
 		return {
-			accessToken: this.signToken({ name: payload.name })
+			accessToken: this.signToken({ name: payload.name, db: payload.db })
 		};
 	}
 
-	private signToken(payload: { name: string }) {
+	private signToken(payload: { name: string; db: number }) {
 		return this.jwtService.sign(payload);
 	}
 }
